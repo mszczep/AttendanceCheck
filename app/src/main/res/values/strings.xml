@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AttendanceCheck</string>
+    <string name="title_attendance">Obecność</string>
+    <string name="title_history">Historia</string>
+    <string name="title_student_list">Lista uczniów</string>
+    <string name="student_list">Lista uczniów</string>
+    <string name="history">Historia</string>
+    <string name="attendance">Obecność</string>
+    <string name="classes">Klasy</string>
+    <string name="cancel">Anuluj</string>
+    <string name="ok">OK</string>
+</resources>
