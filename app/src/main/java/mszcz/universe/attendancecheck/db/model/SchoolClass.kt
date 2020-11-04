@@ -22,7 +22,7 @@ data class SchoolClass(
 )
 
 @Dao
-interface SchoolClassesInterface {
+interface ISchoolClasses {
     @Query("Select * from school_classes")
     fun selectAll(): Single<List<SchoolClass>>
 

@@ -96,7 +96,6 @@ class StudentListFragment : Fragment(), StudentListAdapter.ClickListener {
      * Adding new class
      */
     private fun addNewClass() {
-
         val view = layoutInflater.inflate(R.layout.dialog_add_new_class, null)
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(view)
@@ -119,6 +118,7 @@ class StudentListFragment : Fragment(), StudentListAdapter.ClickListener {
                             .show()
                         refreshRecyclerView()
                     }, { error ->
+                        //TODO Error handling
                         Toast.makeText(
                             requireContext(),
                             "Error: ${error.message}.",

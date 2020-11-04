@@ -1,6 +1,7 @@
 package mszcz.universe.attendancecheck.ui.attendance
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.Toast
@@ -22,6 +23,7 @@ class AttendanceFragment : Fragment(), View.OnClickListener {
     private val viewModel: AttendanceViewModel by viewModel()
     private val disposable = CompositeDisposable()
     private var mMenu: Menu? = null
+    private var classId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,21 +81,30 @@ class AttendanceFragment : Fragment(), View.OnClickListener {
 
     // get attendance -> input into history
     private fun selectClass() {
-        val items = arrayListOf<String>()
-
-        if(mMenu != null) mMenu!!.setGroupVisible(R.id.attendance_menu_group, true)
-
+        //TODO Add a check whether a selected class had its attendance taken already today
         disposable.add(
             viewModel.selectAllClasses()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    it.forEach { items.add(it.name) }
-                    val classes = items.toTypedArray()
+                    if(it.isEmpty()){
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Brak klas")
+                            .setMessage("Proszę najpierw dodać chociaż jedną klasę")
+                            .setPositiveButton("OK", null)
+                            .create()
+                            .show()
+                        return@subscribe
+                    }
+                    if(mMenu != null) mMenu!!.setGroupVisible(R.id.attendance_menu_group, true)
+
+                    val classes = viewModel.formatClasses(it)
                     val dialog = MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Proszę wybrać klasę")
                         .setItems(classes) { _, which ->
-                            checkAttendance(it[which].id, it[which].name)
+                            viewModel.attendingStudents.clear()
+                            classId = it[which].id
+                            checkAttendance(it[which].name)
                         }
                         .create()
                     dialog.show()
@@ -105,9 +116,7 @@ class AttendanceFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun checkAttendance(classId: Int, className: String) {
-
-        val attendingStudents = ArrayList<Int>()
+    private fun checkAttendance(className: String) {
 
         //TODO Add progressBar
         class_name_text_view.text = className
@@ -129,17 +138,11 @@ class AttendanceFragment : Fragment(), View.OnClickListener {
                         )
                     )
                     val adapter = AttendanceAdapter(studentList) { position ->
-
-                        val studentId = studentList[position].id
-
-                        if (attendingStudents.contains(studentId))
-                            attendingStudents.remove(studentId)
-                        else
-                            attendingStudents.add(studentId)
+                        viewModel.studentAttendance(studentList[position].id)
 
                         Toast.makeText(
                             requireContext(),
-                            "Attending students: " + attendingStudents,
+                            "Attending students: " + viewModel.attendingStudents,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -159,7 +162,23 @@ class AttendanceFragment : Fragment(), View.OnClickListener {
      * Finish taking attendance/confirm selection.
      */
     private fun confirmAttendance(){
+        disposable.add(
+        viewModel.insertAttendanceHistory(classId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Toast.makeText(requireContext(), "Finished inserting history", Toast.LENGTH_SHORT)
+                    .show()
+            },{ error ->
+                //TODO Error handling
+                Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT)
+                    .show()
+            })
+        )
 
+        button_check_attendance.visibility = View.VISIBLE
+        constraint_layout_check_attendance.visibility = View.GONE
+        recyclerview_check_attendance.adapter = null
     }
 
     /**

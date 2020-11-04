@@ -4,23 +4,23 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import mszcz.universe.attendancecheck.db.model.SchoolClass
-import mszcz.universe.attendancecheck.db.model.SchoolClassesInterface
-import mszcz.universe.attendancecheck.db.model.Student
-import mszcz.universe.attendancecheck.db.model.IStudents
+import androidx.room.TypeConverters
+import mszcz.universe.attendancecheck.db.model.*
 
 @Database(
     entities = [
         Student::class,
-        SchoolClass::class
+        SchoolClass::class,
+        AttendanceHistory::class
     ],
     version = 11,
     exportSchema = false
 )
-//@TypeConverters(AppTypeConverters::class)
+@TypeConverters(AppTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun studentsInterface(): IStudents
-    abstract fun schoolClassesInterface(): SchoolClassesInterface
+    abstract fun schoolClassesInterface(): ISchoolClasses
+    abstract fun attendanceHistoryInterface(): IAttandanceHistory
 
     companion object {
         @Volatile
