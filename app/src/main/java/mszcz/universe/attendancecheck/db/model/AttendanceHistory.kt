@@ -41,7 +41,7 @@ interface IAttandanceHistory {
     @Insert
     fun insertHistory( attendanceHistory: List<AttendanceHistory>): Completable
 
-    @Query("select class_name as className, create_date as attendanceDate from attendance_history ah inner join school_classes sc on sc.id = ah.class_id order by id desc ")
+    @Query("select class_name as className, create_date as attendanceDate from attendance_history ah inner join school_classes sc on sc.id = ah.class_id order by sc.id desc ")
     fun getHistory(): Single<List<HistoryWithClasses>>
 
 }
