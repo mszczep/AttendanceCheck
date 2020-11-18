@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Single
+import mszcz.universe.attendancecheck.Utilities.HistoryWithClasses
 import java.time.OffsetDateTime
 
 
@@ -39,5 +40,8 @@ interface IAttandanceHistory {
 
     @Insert
     fun insertHistory( attendanceHistory: List<AttendanceHistory>): Completable
+
+    @Query("select class_name as className, create_date as attendanceDate from attendance_history ah inner join school_classes sc on sc.id = ah.class_id order by id desc ")
+    fun getHistory(): Single<List<HistoryWithClasses>>
 
 }

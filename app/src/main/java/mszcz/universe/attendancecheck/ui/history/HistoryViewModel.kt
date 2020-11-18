@@ -1,14 +1,18 @@
 package mszcz.universe.attendancecheck.ui.history
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import io.reactivex.Single
+import mszcz.universe.attendancecheck.Utilities.HistoryWithClasses
 import mszcz.universe.attendancecheck.db.AppDatabase
 
 class HistoryViewModel(val db: AppDatabase) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    /**
+     * Getting attendance history
+     */
+    fun getHistory(): Single<List<HistoryWithClasses>>{
+        return db.attendanceHistoryInterface().getHistory()
     }
-    val text: LiveData<String> = _text
+
+
 }

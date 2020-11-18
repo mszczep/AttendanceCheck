@@ -8,10 +8,10 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 import mszcz.universe.attendancecheck.R
 import mszcz.universe.attendancecheck.Utilities.ClassesWithStudents
 
-class StudentListAdapter(val header: String, val list: List<ClassesWithStudents>, val clickListener: ClickListener): Section(
+class StudentListAdapter(val header: String, val list: List<ClassesWithStudents>, private val clickListener: ClickListener): Section(
     SectionParameters.builder()
         .itemResourceId(R.layout.section_item_student_list)
-        .headerResourceId(R.layout.section_header_student_list)
+        .headerResourceId(R.layout.section_header)
         .build()
 
 ) {
@@ -67,5 +67,5 @@ class ItemViewHolder(itemView: View): ViewHolder(itemView){
 
 class HeaderViewHolder(itemView: View): ViewHolder(itemView){
     val rootView: View = itemView
-    val sectionHeader: TextView = itemView.findViewById(R.id.section_header_student_list)
+    val sectionHeader: TextView = itemView.findViewById(R.id.section_header_text_view)
 }
